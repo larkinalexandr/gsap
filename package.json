@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "astro": "^4.1.1",
+    "gsap": "^3.12.5",
     "scroll-lock": "2.1.5",
     "swiper": "9.4.1"
   },

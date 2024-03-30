@@ -1,0 +1,10 @@
+.intro {
+  &__title {
+    margin-bottom: 50px;
+  }
+
+  &__content {
+    outline: 1px solid rgba(0, 128, 0, 0.56);
+    outline-offset: -1px;
+  }
+}
