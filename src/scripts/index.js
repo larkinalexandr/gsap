@@ -2,8 +2,10 @@ import { initModals } from './modules/modals/init-modals'
 import { mobileVhFix } from './utils/mobile-vh-fix'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Observer } from "gsap/Observer";
 
 gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(Observer);
 
 mobileVhFix()
 document.addEventListener(
@@ -12,40 +14,60 @@ document.addEventListener(
     initModals()
     console.clear()
 
-    const timeline = gsap.timeline({paused: false});
-    const titleChars = document.querySelectorAll('[data-sticky-title] span');
-    const charRect = titleChars[0].getBoundingClientRect();
 
-    timeline.to(titleChars, {
-      y: -window.innerHeight / 2 - charRect.height,
-      ease: 'back.in(3)',
-      stagger: {
-        each: 0.1
+    let sections = document.querySelectorAll("section"),
+      images = document.querySelectorAll(".bg"),
+      headings = gsap.utils.toArray(".section-heading"),
+      outerWrappers = gsap.utils.toArray(".outer"),
+      innerWrappers = gsap.utils.toArray(".inner"),
+      currentIndex = -1,
+      wrap = gsap.utils.wrap(0, sections.length),
+      animating;
+
+    gsap.set(outerWrappers, { yPercent: 100 });
+    gsap.set(innerWrappers, { yPercent: -100 });
+
+    function gotoSection(index, direction) {
+      console.log(index, direction);
+      index = wrap(index); // make sure it's valid
+      animating = true;
+      let fromTop = direction === -1,
+        dFactor = fromTop ? -1 : 1,
+        tl = gsap.timeline({
+          defaults: { duration: 1.25, ease: "power1.inOut" },
+          onComplete: () => animating = false
+        });
+      if (currentIndex >= 0) {
+        // The first time this function runs, current is -1
+        gsap.set(sections[currentIndex], { zIndex: 0 });
+        tl.to(images[currentIndex], { yPercent: -15 * dFactor })
+          .set(sections[currentIndex], { autoAlpha: 0 });
       }
-    });
-
-    ScrollTrigger.create({
-      trigger: "[data-box-container]",
-      start: "top top",
-      end: "bottom bottom",
-      scrub: 1.5,
-      animation: timeline,
-      markers: true,
-      onUpdate: (self) => {
-        document.querySelector('.progress').textContent = self.progress
-        if (self.progress.toFixed(2) == 0.30) {
-          stopScroll()
-        }
-        // stopScroll()
-      }
-    });
+      gsap.set(sections[index], { autoAlpha: 1, zIndex: 1 });
+      tl.fromTo([outerWrappers[index], innerWrappers[index]], {
+        yPercent: i => i ? -100 * dFactor : 100 * dFactor
+      }, {
+        yPercent: 0
+      }, 0)
+        .fromTo(images[index], { yPercent: 15 * dFactor }, { yPercent: 0 }, 0)
 
 
-    function stopScroll() {
-      const scroll = window.pageYOffset;
-
-      window.scrollTo(0,scroll)
+      currentIndex = index;
     }
+
+    const observer = Observer.create({
+      type: "wheel,touch,pointer",
+      wheelSpeed: -1,
+      onDown: () => !animating && gotoSection(currentIndex - 1, -1),
+      onUp: () => !animating && gotoSection(currentIndex + 1, 1),
+      tolerance: 10,
+      preventDefault: true
+    });
+
+    gotoSection(0, 1);
+
+
+
 
   },
   true
