@@ -12,40 +12,41 @@ document.addEventListener(
     initModals()
     console.clear()
 
-    const textElements = gsap.utils.toArray('.textelements')
+    const timeline = gsap.timeline({paused: false});
+    const titleChars = document.querySelectorAll('[data-sticky-title] span');
+    const charRect = titleChars[0].getBoundingClientRect();
 
-    const toggleRevealText = (index) => {
-      console.log(index)
-      textElements.forEach((text) => {
-        text.classList.remove('revealed')
-      })
+    timeline.to(titleChars, {
+      y: -window.innerHeight / 2 - charRect.height,
+      ease: 'back.in(3)',
+      stagger: {
+        each: 0.1
+      }
+    });
 
-      textElements[index].classList.add('revealed')
+    ScrollTrigger.create({
+      trigger: "[data-box-container]",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 1.5,
+      animation: timeline,
+      markers: true,
+      onUpdate: (self) => {
+        document.querySelector('.progress').textContent = self.progress
+        if (self.progress.toFixed(2) == 0.30) {
+          stopScroll()
+        }
+        // stopScroll()
+      }
+    });
+
+
+    function stopScroll() {
+      const scroll = window.pageYOffset;
+
+      window.scrollTo(0,scroll)
     }
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: '.container',
-        start: 'top top',
-        end: () => '+=' + 100 * textElements.length + '%',
-        markers: true,
-        pin: true,
-        scrub: 1
-      }
-    })
-
-    textElements.forEach((panel, index) => {
-      tl.to(
-        panel,
-        {
-          yPercent: 0,
-          ease: 'none'
-        },
-        '+=0.25'
-      )
-
-      tl.call(toggleRevealText, [index], '<+=0.0')
-    })
   },
   true
 )
