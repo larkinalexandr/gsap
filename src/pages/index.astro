@@ -1,34 +1,63 @@
 ---
 import Container from '@components/Container/Container'
-import Modal from '@components/Modal/Modal'
-import myImage from '@images/mountain.jpg'
 import MainLayout from '@layouts/Main/Main'
-import { Picture } from 'astro:assets'
+import Intro from "../components/Intro/Intro.astro";
 ---
 
 <MainLayout title="Главная">
-  <Container>
-    <!--
-      Миксин генерирует все изображения из изначальной картинки (х1, х2, webp, avif)
-      нужно только изначально прокинуть картинку х2
 
-      п.с. удалите коммент при подготовке проекта
-    -->
-    <Picture
-      src={myImage}
-      alt="Example image."
-      quality={'high'}
-      formats={['webp']}
-      fallbackFormat="jpg"
-      width={800}
-      densities={[2]}
-    />
-    <p>hello</p>
-  </Container>
 
-  <Fragment slot="modals">
-    <Modal name="example">
-      <h1>Example modal</h1>
-    </Modal>
-  </Fragment>
+  <header>
+    <div>Animated Sections</div>
+    <div><a href="https://codepen.io/BrianCross/pen/PoWapLP">Original By Brian</a></div>
+  </header>
+  <section class="first">
+    <div class="outer">
+      <div class="inner">
+        <div class="bg one">
+          <h2 class="section-heading">Scroll down</h2>
+        </div>
+      </div>
+    </div>
+
+  </section>
+  <section class="second">
+    <div class="outer">
+      <div class="inner">
+        <div class="bg">
+          <h2 class="section-heading">Animated with GSAP</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="third">
+    <div class="outer">
+      <div class="inner">
+        <div class="bg">
+          <h2 class="section-heading">GreenSock</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="fourth">
+    <div class="outer">
+      <div class="inner">
+        <div class="bg">
+          <h2 class="section-heading">Animation platform</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="fifth">
+    <div class="outer">
+      <div class="inner">
+        <div class="bg">
+          <h2 class="section-heading">Keep scrolling</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
 </MainLayout>
